@@ -133,7 +133,6 @@ namespace OnSale.Web.Controllers
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
-
                 }
                 catch (DbUpdateException dbUpdateException)
                 {
@@ -201,6 +200,79 @@ namespace OnSale.Web.Controllers
             }
 
             return View(product);
+        }
+
+        public async Task<IActionResult> AddImage(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Product product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            AddProductImageViewModel model = new AddProductImageViewModel { ProductId = product.Id };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddImage(AddProductImageViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                Product product = await _context.Products
+                    .Include(p => p.ProductImages)
+                    .FirstOrDefaultAsync(p => p.Id == model.ProductId);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
+                try
+                {
+                    Guid imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "products");
+                    if (product.ProductImages == null)
+                    {
+                        product.ProductImages = new List<ProductImage>();
+                    }
+
+                    product.ProductImages.Add(new ProductImage { ImageId = imageId });
+                    _context.Update(product);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction($"{nameof(Details)}/{product.Id}");
+
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, exception.Message);
+                }
+            }
+
+            return View(model);
+        }
+        public async Task<IActionResult> DeleteImage(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            ProductImage productImage = await _context.ProductImages
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (productImage == null)
+            {
+                return NotFound();
+            }
+
+            Product product = await _context.Products.FirstOrDefaultAsync(p => p.ProductImages.FirstOrDefault(pi => pi.Id == productImage.Id) != null);
+            _context.ProductImages.Remove(productImage);
+            await _context.SaveChangesAsync();
+            return RedirectToAction($"{nameof(Details)}/{product.Id}");
         }
     }
 }
