@@ -23,7 +23,7 @@ namespace OnSale.Web.Data
 
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
-        public DbSet<Products> Products { get; set; }
+        public DbSet<Product> Products { get; set; }
 
         public DbSet<ProductImage> ProductImages { get; set; }
 
@@ -55,7 +55,7 @@ namespace OnSale.Web.Data
             });
 
 
-            modelBuilder.Entity<Products>()
+            modelBuilder.Entity<Product>()
                 .HasIndex(t => t.Name)
                 .IsUnique();
         }

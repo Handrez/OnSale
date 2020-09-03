@@ -15,7 +15,11 @@ namespace OnSale.Prism.ViewModels
     public class ProductsPageViewModel : ViewModelBase
     {
         private readonly IApiService _apiService;
-        private ObservableCollection<Products> _product;
+        private ObservableCollection<Product> _product;
+        private bool _isRunning;
+        private string _search;
+        private List<Product> _myProducts;
+        private DelegateCommand _searchCommand;
 
         public ProductsPageViewModel(INavigationService navigationService, IApiService apiService)
             : base(navigationService)
@@ -25,7 +29,25 @@ namespace OnSale.Prism.ViewModels
             LoadProductsAsync();
         }
 
-        public ObservableCollection<Products> Products
+        public DelegateCommand SearchCommand => _searchCommand ?? (_searchCommand = new DelegateCommand(ShowProducts));
+
+        public string Search
+        {
+            get => _search;
+            set
+            {
+                SetProperty(ref _search, value);
+                ShowProducts();
+            }
+        }
+
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set => SetProperty(ref _isRunning, value);
+        }
+
+        public ObservableCollection<Product> Products
         {
             get => _product;
             set => SetProperty(ref _product, value);
@@ -40,8 +62,10 @@ namespace OnSale.Prism.ViewModels
                 return;
             }
 
+            IsRunning = true;
             string url = App.Current.Resources["UrlAPI"].ToString();
-            Response response = await _apiService.GetListAsync<Products>(url, "/api", "/Products");
+            Response response = await _apiService.GetListAsync<Product>(url, "/api", "/Products");
+            IsRunning = false;
 
             if (!response.IsSuccess)
             {
@@ -49,8 +73,21 @@ namespace OnSale.Prism.ViewModels
                 return;
             }
 
-            List<Products> myProducts = (List<Products>)response.Result;
-            Products = new ObservableCollection<Products>(myProducts);
+            _myProducts = (List<Product>)response.Result;
+            ShowProducts();
+        }
+
+        private void ShowProducts()
+        {
+            if (string.IsNullOrEmpty(Search))
+            {
+                Products = new ObservableCollection<Product>(_myProducts);
+            }
+            else
+            {
+                Products = new ObservableCollection<Product>(_myProducts
+                    .Where(p => p.Name.ToLower().Contains(Search.ToLower())));
+            }
         }
     }
 }
