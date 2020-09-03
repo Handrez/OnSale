@@ -1,4 +1,5 @@
 ﻿using OnSale.Common.Entities;
+using OnSale.Prism.Helpers;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
@@ -17,7 +18,7 @@ namespace OnSale.Prism.ViewModels
 
         public ProductDetailPageViewModel(INavigationService navigationService) : base(navigationService)
         {
-            Title = "Product";
+            Title = Languages.Product;
         }
 
         public Product Product
