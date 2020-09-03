@@ -1,6 +1,7 @@
 ﻿using OnSale.Common.Entities;
 using OnSale.Common.Responses;
 using OnSale.Common.Services;
+using OnSale.Prism.ItemViewModels;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
@@ -14,16 +15,17 @@ namespace OnSale.Prism.ViewModels
 {
     public class ProductsPageViewModel : ViewModelBase
     {
+        private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
-        private ObservableCollection<Product> _product;
         private bool _isRunning;
         private string _search;
         private List<Product> _myProducts;
         private DelegateCommand _searchCommand;
+        private ObservableCollection<ProductItemViewModel> _products;
 
-        public ProductsPageViewModel(INavigationService navigationService, IApiService apiService)
-            : base(navigationService)
+        public ProductsPageViewModel(INavigationService navigationService, IApiService apiService) : base(navigationService)
         {
+            _navigationService = navigationService;
             _apiService = apiService;
             Title = "Products";
             LoadProductsAsync();
@@ -47,12 +49,11 @@ namespace OnSale.Prism.ViewModels
             set => SetProperty(ref _isRunning, value);
         }
 
-        public ObservableCollection<Product> Products
+        public ObservableCollection<ProductItemViewModel> Products
         {
-            get => _product;
-            set => SetProperty(ref _product, value);
+            get => _products;
+            set => SetProperty(ref _products, value);
         }
-
 
         private async void LoadProductsAsync()
         {
@@ -81,12 +82,34 @@ namespace OnSale.Prism.ViewModels
         {
             if (string.IsNullOrEmpty(Search))
             {
-                Products = new ObservableCollection<Product>(_myProducts);
+                Products = new ObservableCollection<ProductItemViewModel>(_myProducts.Select(p => new ProductItemViewModel(_navigationService)
+                {
+                    Category = p.Category,
+                    Description = p.Description,
+                    Id = p.Id,
+                    IsActive = p.IsActive,
+                    IsStarred = p.IsStarred,
+                    Name = p.Name,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages
+                })
+                    .ToList());
             }
             else
             {
-                Products = new ObservableCollection<Product>(_myProducts
-                    .Where(p => p.Name.ToLower().Contains(Search.ToLower())));
+                Products = new ObservableCollection<ProductItemViewModel>(_myProducts.Select(p => new ProductItemViewModel(_navigationService)
+                {
+                    Category = p.Category,
+                    Description = p.Description,
+                    Id = p.Id,
+                    IsActive = p.IsActive,
+                    IsStarred = p.IsStarred,
+                    Name = p.Name,
+                    Price = p.Price,
+                    ProductImages = p.ProductImages
+                })
+                    .Where(p => p.Name.ToLower().Contains(Search.ToLower()))
+                    .ToList());
             }
         }
     }
