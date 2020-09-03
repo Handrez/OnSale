@@ -7,7 +7,7 @@ using System.Text;
 
 namespace OnSale.Common.Entities
 {
-    public class Product
+    public class Products
     {
         public int Id { get; set; }
 

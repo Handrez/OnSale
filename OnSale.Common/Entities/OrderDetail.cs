@@ -9,7 +9,7 @@ namespace OnSale.Common.Entities
     {
         public int Id { get; set; }
 
-        public Product Product { get; set; }
+        public Products Product { get; set; }
 
         public float Quantity { get; set; }
 
