@@ -99,6 +99,7 @@
     <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Implementations\Localize.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <None Include="Entitlements.plist" />
@@ -214,6 +215,10 @@
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\OnSale.Common\OnSale.Common.csproj">
+      <Project>{e6938e39-97c8-469e-95e6-8c2d1cd40599}</Project>
+      <Name>OnSale.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OnSale.Prism\OnSale.Prism.csproj">
       <Project>{A682884C-CB44-4A89-B752-27BB634E0ABE}</Project>
       <Name>OnSale.Prism</Name>

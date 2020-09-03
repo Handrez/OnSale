@@ -30,8 +30,8 @@ namespace OnSale.Web.Data.Entities
 
         [Display(Name = "Image")]
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://onsalehandrez.azurewebsites.net/images/noimage.png"
-            : $"https://handrez.blob.core.windows.net/users/{ImageId}";
+            ? $"https://onsalehandres.azurewebsites.net/images/noimage.png"
+            : $"https://handres.blob.core.windows.net/users/{ImageId}";
 
         [Display(Name = "User Type")]
         public UserType UserType { get; set; }
