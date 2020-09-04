@@ -22,7 +22,7 @@ namespace OnSale.Prism
         {
             SyncfusionLicenseProvider.RegisterLicense("MzEyMjk5QDMxMzgyZTMyMmUzMERGby9CSGxTbHNsdkhSd2drNVN3ZWNsV1dteFNmMzhxSTVpYnNYeS9WakE9");
             InitializeComponent();
-            await NavigationService.NavigateAsync($"NavigationPage/{nameof(ProductsPage)}");
+            await NavigationService.NavigateAsync($"{nameof(OnSaleMasterDetailPage)}/NavigationPage/{nameof(ProductsPage)}");
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
@@ -32,6 +32,11 @@ namespace OnSale.Prism
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<ProductsPage, ProductsPageViewModel>();
             containerRegistry.RegisterForNavigation<ProductDetailPage, ProductDetailPageViewModel>();
+            containerRegistry.RegisterForNavigation<LoginPage, LoginPageViewModel>();
+            containerRegistry.RegisterForNavigation<OnSaleMasterDetailPage, OnSaleMasterDetailPageViewModel>();
+            containerRegistry.RegisterForNavigation<ShowCarPage, ShowCarPageViewModel>();
+            containerRegistry.RegisterForNavigation<ShowHistoryPage, ShowHistoryPageViewModel>();
+            containerRegistry.RegisterForNavigation<ModifyUserPage, ModifyUserPageViewModel>();
         }
     }
 }
