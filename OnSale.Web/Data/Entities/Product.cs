@@ -1,11 +1,12 @@
-﻿using System;
+﻿using OnSale.Common.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 
-namespace OnSale.Common.Entities
+namespace OnSale.Web.Data.Entities
 {
     public class Product
     {
@@ -38,5 +39,13 @@ namespace OnSale.Common.Entities
         public string ImageFullPath => ProductImages == null || ProductImages.Count == 0
             ? $"https://onsalehandres.azurewebsites.net/images/noimage.png"
             : ProductImages.FirstOrDefault().ImageFullPath;
+
+        public ICollection<Qualification> Qualifications { get; set; }
+
+        [DisplayName("Product Qualifications")]
+        public int ProductQualifications => Qualifications == null ? 0 : Qualifications.Count;
+
+        [DisplayFormat(DataFormatString = "{0:N2}")]
+        public float Qualification => Qualifications == null || Qualifications.Count == 0 ? 0 : Qualifications.Average(q => q.Score);
     }
 }

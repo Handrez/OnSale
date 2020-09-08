@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace OnSale.Common.Entities
+namespace OnSale.Web.Data.Entities
 {
     public class OrderDetail
     {
