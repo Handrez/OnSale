@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Vereyon.Web;
 
 namespace OnSale.Web.Controllers
 {
@@ -18,12 +19,14 @@ namespace OnSale.Web.Controllers
         private readonly DataContext _context;
         private readonly IBlobHelper _blobHelper;
         private readonly IConverterHelper _converterHelper;
+        private readonly IFlashMessage _flashMessage;
 
-        public CategoriesController(DataContext context, IBlobHelper blobHelper, IConverterHelper converterHelper)
+        public CategoriesController(DataContext context, IBlobHelper blobHelper, IConverterHelper converterHelper, IFlashMessage flashMessage)
         {
             _context = context;
             _blobHelper = blobHelper;
             _converterHelper = converterHelper;
+            _flashMessage = flashMessage;
         }
 
         public async Task<IActionResult> Index()
@@ -153,10 +156,11 @@ namespace OnSale.Web.Controllers
             {
                 _context.Categories.Remove(category);
                 await _context.SaveChangesAsync();
+                _flashMessage.Confirmation("The category was deleted.");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, ex.Message);
+                _flashMessage.Danger("The category can't be deleted because it has related records.");
             }
 
             return RedirectToAction(nameof(Index));
