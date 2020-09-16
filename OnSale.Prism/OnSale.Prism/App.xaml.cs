@@ -1,14 +1,14 @@
-using Prism;
-using Prism.Ioc;
+using OnSale.Common.Helpers;
+using OnSale.Common.Services;
+using OnSale.Prism.Helpers;
 using OnSale.Prism.ViewModels;
 using OnSale.Prism.Views;
-using Xamarin.Essentials.Interfaces;
-using Xamarin.Essentials.Implementation;
-using Xamarin.Forms;
-using OnSale.Common.Services;
-using OnSale.Common.Entities;
+using Prism;
+using Prism.Ioc;
 using Syncfusion.Licensing;
-using OnSale.Prism.Helpers;
+using Xamarin.Essentials.Implementation;
+using Xamarin.Essentials.Interfaces;
+using Xamarin.Forms;
 
 namespace OnSale.Prism
 {
@@ -32,6 +32,7 @@ namespace OnSale.Prism
 
             containerRegistry.Register<IApiService, ApiService>();
             containerRegistry.Register<IRegexHelper, RegexHelper>();
+            containerRegistry.Register<IFilesHelper, FilesHelper>();
 
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<ProductsPage, ProductsPageViewModel>();
@@ -46,6 +47,7 @@ namespace OnSale.Prism
             containerRegistry.RegisterForNavigation<ProductTabbedPage, ProductTabbedPageViewModel>();
             containerRegistry.RegisterForNavigation<AddQualificationPage, AddQualificationPageViewModel>();
             containerRegistry.RegisterForNavigation<RegisterPage, RegisterPageViewModel>();
+            containerRegistry.RegisterForNavigation<RecoverPasswordPage, RecoverPasswordPageViewModel>();
         }
     }
 }

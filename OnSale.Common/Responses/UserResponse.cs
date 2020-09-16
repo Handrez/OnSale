@@ -26,7 +26,7 @@ namespace OnSale.Common.Responses
 
         public string ImageFullPath => ImageId == Guid.Empty
             ? $"https://onsalehandres.azurewebsites.net/images/noimage.png"
-            : $"https://handres.blob.core.windows.net/categories/{ImageId}";
+            : $"https://handres.blob.core.windows.net/users/{ImageId}";
 
         public UserType UserType { get; set; }
 

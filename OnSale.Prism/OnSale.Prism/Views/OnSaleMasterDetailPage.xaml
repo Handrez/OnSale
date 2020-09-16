@@ -6,7 +6,7 @@
                   xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
                   xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Transformations"
                   x:Class="OnSale.Prism.Views.OnSaleMasterDetailPage">
-    
+
     <MasterDetailPage.Master>
         <ContentPage BackgroundColor="{StaticResource ColorSecondary}" 
                      IconImageSource="ic_action_menu"
@@ -20,11 +20,11 @@
             </ContentPage.Padding>
 
             <StackLayout Padding="20">
-                <StackLayout Orientation="Horizontal">
-                    <Image HeightRequest="80"
-                        Source="onsale"/>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                    <!--<Image HeightRequest="80"
+                        Source="onsale"/>-->
                     <ffimageloading:CachedImage Aspect="AspectFill"
-                                            Source="{Binding User.ImageFullPath}" 
+                                            Source="{Binding User.ImageFullPath}"
                                             CacheDuration= "50"
                                             HeightRequest="100"
                                             Margin="5"
@@ -36,7 +36,6 @@
                         </ffimageloading:CachedImage.Transformations>
                     </ffimageloading:CachedImage>
                 </StackLayout>
-
                 <Label FontAttributes="Bold"
                        FontSize="Large"
                        Text="{Binding User.FullName}"/>
