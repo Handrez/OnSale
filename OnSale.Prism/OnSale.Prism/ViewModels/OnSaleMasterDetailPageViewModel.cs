@@ -14,14 +14,21 @@ namespace OnSale.Prism.ViewModels
 {
     public class OnSaleMasterDetailPageViewModel : ViewModelBase
     {
+        private static OnSaleMasterDetailPageViewModel _instance;
         private readonly INavigationService _navigationService;
         private UserResponse _user;
 
         public OnSaleMasterDetailPageViewModel(INavigationService navigationService) : base(navigationService)
         {
+            _instance = this;
             _navigationService = navigationService;
             LoadMenus();
             LoadUser();
+        }
+
+        public static OnSaleMasterDetailPageViewModel GetInstance()
+        {
+            return _instance;
         }
 
         public UserResponse User
@@ -80,7 +87,7 @@ namespace OnSale.Prism.ViewModels
                 }).ToList());
         }
 
-        private void LoadUser()
+        public void LoadUser()
         {
             if (Settings.IsLogin)
             {
