@@ -414,4 +414,34 @@
     <data name="ProductExistInOrder" xml:space="preserve">
     <value>El producto ya existe en la orden. Puede modificar el pedido en 'Ver carro de compras'.</value>
   </data>
+    <data name="Delete" xml:space="preserve">
+    <value>Borrar</value>
+  </data>
+    <data name="Value" xml:space="preserve">
+    <value>Valor</value>
+  </data>
+    <data name="FinishOrder" xml:space="preserve">
+    <value>Finalizar Pedido</value>
+  </data>
+    <data name="Yes" xml:space="preserve">
+    <value>Sí</value>
+  </data>
+    <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+    <data name="ClearAllConfirm" xml:space="preserve">
+    <value>¿Está seguro de eliminar todos los productos del pedido?</value>
+  </data>
+    <data name="Items" xml:space="preserve">
+    <value>Artículos</value>
+  </data>
+    <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+    <data name="DeleteProductInOrderConfirm" xml:space="preserve">
+    <value>¿Estas seguro de borrar el producto de la orden?</value>
+  </data>
+    <data name="ModifyOrder" xml:space="preserve">
+    <value>Modificar Pedido</value>
+  </data>
 </root>

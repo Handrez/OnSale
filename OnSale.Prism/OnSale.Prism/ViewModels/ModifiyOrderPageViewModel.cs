@@ -2,9 +2,8 @@
 using OnSale.Common.Entities;
 using OnSale.Common.Helpers;
 using OnSale.Common.Models;
-using OnSale.Common.Responses;
 using OnSale.Prism.Helpers;
-using OnSale.Prism.Views;
+using OnSale.Prism.ItemViewModels;
 using Prism.Commands;
 using Prism.Navigation;
 using System.Collections.Generic;
@@ -13,29 +12,41 @@ using System.Threading.Tasks;
 
 namespace OnSale.Prism.ViewModels
 {
-    public class AddToCartPageViewModel : ViewModelBase
+    public class ModifiyOrderPageViewModel : ViewModelBase
     {
         private readonly INavigationService _navigationService;
-        private ProductResponse _product;
+        private ProductItemViewModel _product;
         private ObservableCollection<ProductImage> _images;
         private bool _isRunning;
         private bool _isEnabled;
-        private DelegateCommand _addToCartCommand;
+        private float _quantity;
+        private string _remarks;
+        private DelegateCommand _saveCommand;
+        private DelegateCommand _deleteCommand;
 
-        public AddToCartPageViewModel(INavigationService navigationService)
+        public ModifiyOrderPageViewModel(INavigationService navigationService)
             : base(navigationService)
         {
             _navigationService = navigationService;
-            Title = Languages.AddToCart;
+            Title = Languages.ModifyOrder;
             IsEnabled = true;
-            Quantity = 1;
         }
 
-        public DelegateCommand AddToCartCommand => _addToCartCommand ?? (_addToCartCommand = new DelegateCommand(AddToCartAsync));
+        public DelegateCommand SaveCommand => _saveCommand ?? (_saveCommand = new DelegateCommand(SaveAsync));
 
-        public float Quantity { get; set; }
+        public DelegateCommand DeleteCommand => _deleteCommand ?? (_deleteCommand = new DelegateCommand(DeleteAsync));
 
-        public string Remarks { get; set; }
+        public float Quantity
+        {
+            get => _quantity;
+            set => SetProperty(ref _quantity, value);
+        }
+
+        public string Remarks
+        {
+            get => _remarks;
+            set => SetProperty(ref _remarks, value);
+        }
 
         public bool IsRunning
         {
@@ -55,7 +66,7 @@ namespace OnSale.Prism.ViewModels
             set => SetProperty(ref _images, value);
         }
 
-        public ProductResponse Product
+        public ProductItemViewModel Product
         {
             get => _product;
             set => SetProperty(ref _product, value);
@@ -67,12 +78,14 @@ namespace OnSale.Prism.ViewModels
 
             if (parameters.ContainsKey("product"))
             {
-                Product = parameters.GetValue<ProductResponse>("product");
+                Product = parameters.GetValue<ProductItemViewModel>("product");
                 Images = new ObservableCollection<ProductImage>(Product.ProductImages);
+                Quantity = Product.Quantity;
+                Remarks = Product.Remarks;
             }
         }
 
-        private async void AddToCartAsync()
+        private async void SaveAsync()
         {
             bool isValid = await ValidateDataAsync();
             if (!isValid)
@@ -83,30 +96,21 @@ namespace OnSale.Prism.ViewModels
             List<OrderDetail> orderDetails = JsonConvert.DeserializeObject<List<OrderDetail>>(Settings.OrderDetails);
             if (orderDetails == null)
             {
-                orderDetails = new List<OrderDetail>();
+                return;
             }
 
             foreach (OrderDetail orderDetail in orderDetails)
             {
                 if (orderDetail.Product.Id == Product.Id)
                 {
-                    await App.Current.MainPage.DisplayAlert(Languages.Error, Languages.ProductExistInOrder, Languages.Accept);
-                    await _navigationService.GoBackAsync();
-                    return;
+                    orderDetail.Quantity = Quantity;
+                    orderDetail.Remarks = Remarks;
+                    break;
                 }
             }
 
-
-            orderDetails.Add(new OrderDetail
-            {
-                Product = Product,
-                Quantity = Quantity,
-                Remarks = Remarks
-            });
-
             Settings.OrderDetails = JsonConvert.SerializeObject(orderDetails);
-            await App.Current.MainPage.DisplayAlert(Languages.Ok, Languages.AddToCartMessage, Languages.Accept);
-            await _navigationService.NavigateAsync($"/{nameof(OnSaleMasterDetailPage)}/NavigationPage/{nameof(ProductsPage)}");
+            await _navigationService.GoBackAsync();
         }
 
         private async Task<bool> ValidateDataAsync()
@@ -118,6 +122,34 @@ namespace OnSale.Prism.ViewModels
             }
 
             return true;
+        }
+
+        private async void DeleteAsync()
+        {
+            bool answer = await App.Current.MainPage.DisplayAlert(Languages.Delete, Languages.DeleteProductInOrderConfirm, Languages.Yes, Languages.No);
+            if (!answer)
+            {
+                return;
+            }
+
+            List<OrderDetail> orderDetails = JsonConvert.DeserializeObject<List<OrderDetail>>(Settings.OrderDetails);
+            if (orderDetails == null)
+            {
+                return;
+            }
+
+            foreach (OrderDetail orderDetail in orderDetails)
+            {
+                if (orderDetail.Product.Id == Product.Id)
+                {
+                    orderDetails.Remove(orderDetail);
+                    break;
+                }
+            }
+
+
+            Settings.OrderDetails = JsonConvert.SerializeObject(orderDetails);
+            await _navigationService.GoBackAsync();
         }
     }
 }
