@@ -106,6 +106,15 @@ namespace OnSale.Prism.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The product was added to cart successfully..
+        /// </summary>
+        public static string AddToCartMessage {
+            get {
+                return ResourceManager.GetString("AddToCartMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -772,6 +781,15 @@ namespace OnSale.Prism.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The product already exists on the order. You can modify the order in &apos;View shopping cart&apos;..
+        /// </summary>
+        public static string ProductExistInOrder {
+            get {
+                return ResourceManager.GetString("ProductExistInOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Products.
         /// </summary>
         public static string Products {
@@ -813,6 +831,33 @@ namespace OnSale.Prism.Resources {
         public static string Qualifications {
             get {
                 return ResourceManager.GetString("Qualifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quantity.
+        /// </summary>
+        public static string Quantity {
+            get {
+                return ResourceManager.GetString("Quantity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must enter a quantity..
+        /// </summary>
+        public static string QuantityError {
+            get {
+                return ResourceManager.GetString("QuantityError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the product quantity....
+        /// </summary>
+        public static string QuantityPlaceHolder {
+            get {
+                return ResourceManager.GetString("QuantityPlaceHolder", resourceCulture);
             }
         }
         

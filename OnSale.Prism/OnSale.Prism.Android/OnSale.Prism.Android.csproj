@@ -73,6 +73,9 @@
     <PackageReference Include="Syncfusion.Xamarin.SfBusyIndicator.Android">
       <Version>18.2.0.58</Version>
     </PackageReference>
+    <PackageReference Include="Syncfusion.Xamarin.SfNumericTextBox.Android">
+      <Version>18.2.0.58</Version>
+    </PackageReference>
     <PackageReference Include="Syncfusion.Xamarin.SfRating.Android">
       <Version>18.2.0.58</Version>
     </PackageReference>

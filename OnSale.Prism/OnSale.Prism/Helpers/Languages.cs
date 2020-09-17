@@ -200,5 +200,15 @@ namespace OnSale.Prism.Helpers
         public static string Error005 => Resource.Error005;
 
         public static string ChangePassworrdMessage => Resource.ChangePassworrdMessage;
+
+        public static string Quantity => Resource.Quantity;
+
+        public static string QuantityError => Resource.QuantityError;
+
+        public static string QuantityPlaceHolder => Resource.QuantityPlaceHolder;
+
+        public static string AddToCartMessage => Resource.AddToCartMessage;
+
+        public static string ProductExistInOrder => Resource.ProductExistInOrder;
     }
 }

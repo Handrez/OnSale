@@ -1,12 +1,13 @@
-﻿using OnSale.Common.Entities;
+﻿using Newtonsoft.Json;
+using OnSale.Common.Helpers;
+using OnSale.Common.Models;
 using OnSale.Common.Responses;
 using OnSale.Common.Services;
 using OnSale.Prism.Helpers;
 using OnSale.Prism.ItemViewModels;
+using OnSale.Prism.Views;
 using Prism.Commands;
-using Prism.Mvvm;
 using Prism.Navigation;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -19,8 +20,10 @@ namespace OnSale.Prism.ViewModels
         private readonly INavigationService _navigationService;
         private readonly IApiService _apiService;
         private bool _isRunning;
+        private int _cartNumber;
         private string _search;
         private List<ProductResponse> _myProducts;
+        private DelegateCommand _showCartCommand;
         private DelegateCommand _searchCommand;
         private ObservableCollection<ProductItemViewModel> _products;
 
@@ -29,10 +32,19 @@ namespace OnSale.Prism.ViewModels
             _navigationService = navigationService;
             _apiService = apiService;
             Title = Languages.Products;
+            LoadCartNumber();
             LoadProductsAsync();
         }
 
+        public DelegateCommand ShowCartCommand => _showCartCommand ?? (_showCartCommand = new DelegateCommand(ShowCartAsync));
+
         public DelegateCommand SearchCommand => _searchCommand ?? (_searchCommand = new DelegateCommand(ShowProducts));
+
+        public int CartNumber
+        {
+            get => _cartNumber;
+            set => SetProperty(ref _cartNumber, value);
+        }
 
         public string Search
         {
@@ -114,6 +126,23 @@ namespace OnSale.Prism.ViewModels
                     .Where(p => p.Name.ToLower().Contains(Search.ToLower()))
                     .ToList());
             }
+        }
+
+        private void LoadCartNumber()
+        {
+            List<OrderDetail> orderDetails = JsonConvert.DeserializeObject<List<OrderDetail>>(Settings.OrderDetails);
+            if (orderDetails == null)
+            {
+                orderDetails = new List<OrderDetail>();
+                Settings.OrderDetails = JsonConvert.SerializeObject(orderDetails);
+            }
+
+            CartNumber = orderDetails.Count;
+        }
+
+        private async void ShowCartAsync()
+        {
+            await _navigationService.NavigateAsync(nameof(ShowCarPage));
         }
     }
 }
