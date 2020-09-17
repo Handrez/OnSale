@@ -5,6 +5,7 @@ using OnSale.Common.Requests;
 using OnSale.Common.Responses;
 using OnSale.Common.Services;
 using OnSale.Prism.Helpers;
+using OnSale.Prism.Views;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using Prism.Commands;
@@ -351,6 +352,7 @@ namespace OnSale.Prism.ViewModels
 
         private async void ChangePasswordAsync()
         {
+            await _navigationService.NavigateAsync(nameof(ChangePasswordPage));
         }
     }
 }
