@@ -5,6 +5,7 @@ using Syncfusion.SfBusyIndicator.XForms.iOS;
 using Syncfusion.SfNumericTextBox.XForms.iOS;
 using Syncfusion.SfRating.XForms.iOS;
 using Syncfusion.SfRotator.XForms.iOS;
+using Syncfusion.XForms.iOS.MaskedEdit;
 using Syncfusion.XForms.iOS.TextInputLayout;
 using UIKit;
 
@@ -24,6 +25,7 @@ namespace OnSale.Prism.iOS
             new SfBusyIndicatorRenderer();
             new SfRotatorRenderer();
             LoadApplication(new App(new iOSInitializer()));
+            SfMaskedEditRenderer.Init();
             SfRatingRenderer.Init();
             return base.FinishedLaunching(app, options);
         }

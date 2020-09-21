@@ -339,6 +339,9 @@
     <PackageReference Include="Syncfusion.Xamarin.SfBusyIndicator.IOS">
       <Version>18.2.0.58</Version>
     </PackageReference>
+    <PackageReference Include="Syncfusion.Xamarin.SfMaskedEdit.IOS">
+      <Version>18.2.0.58</Version>
+    </PackageReference>
     <PackageReference Include="Syncfusion.Xamarin.SfNumericTextBox.IOS">
       <Version>18.2.0.58</Version>
     </PackageReference>

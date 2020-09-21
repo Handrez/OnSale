@@ -471,4 +471,25 @@
     <data name="DeliveryAddressPlaceHolder" xml:space="preserve">
     <value>Ingresa la dirección de envío...</value>
   </data>
+    <data name="Expiry" xml:space="preserve">
+    <value>Fecha de expiración aa/mm</value>
+  </data>
+    <data name="ExpiryError" xml:space="preserve">
+    <value>Debes ingresar la fecha de expiración de tu tarjeta.</value>
+  </data>
+    <data name="CreditCardError" xml:space="preserve">
+    <value>Debes ingresar el número de tu tarjeta de crédito.</value>
+  </data>
+    <data name="CVV" xml:space="preserve">
+    <value>CVV</value>
+  </data>
+    <data name="CVVError" xml:space="preserve">
+    <value>Debes ingresar el CVV de tu tarjeta.</value>
+  </data>
+    <data name="CreditCardNoValid" xml:space="preserve">
+    <value>Tarjeta de crédito no válida.</value>
+  </data>
+    <data name="PayNoOk" xml:space="preserve">
+    <value>El proceso de pago no fue exitoso.</value>
+  </data>
 </root>
