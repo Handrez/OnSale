@@ -19,7 +19,7 @@ namespace OnSale.Web.Data.Entities
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:C2}")]
+        [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
         public decimal Price { get; set; }
 
         [DisplayName("Is Active")]

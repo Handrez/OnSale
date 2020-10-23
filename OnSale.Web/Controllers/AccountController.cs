@@ -90,7 +90,7 @@ namespace OnSale.Web.Controllers
                     $"plase click in this link:</br></br><a href = \"{tokenLink}\">Confirm Email</a>");
                 if (response.IsSuccess)
                 {
-                    ViewBag.Message = "The instructions to allow your user has been sent to email.";
+                    ViewBag.Message = "The instructions to allow your admin has been sent to email.";
                     return View(model);
                 }
 
@@ -268,7 +268,9 @@ namespace OnSale.Web.Controllers
                 DepartmentId = department.Id,
                 Departments = _combosHelper.GetComboDepartments(country.Id),
                 Id = user.Id,
-                Document = user.Document
+                Document = user.Document,
+                Latitude = user.Latitude,
+                Logitude = user.Logitude
             };
 
             return View(model);
@@ -296,6 +298,9 @@ namespace OnSale.Web.Controllers
                 user.ImageId = imageId;
                 user.City = await _context.Cities.FindAsync(model.CityId);
                 user.Document = model.Document;
+                user.Latitude = model.Latitude;
+                user.Logitude = model.Logitude;
+
 
                 await _userHelper.UpdateUserAsync(user);
                 return RedirectToAction("Index", "Home");

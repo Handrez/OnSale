@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using OnSale.Common.Entities;
 using OnSale.Common.Enums;
+using OnSale.Common.Models;
 using OnSale.Common.Requests;
 using OnSale.Common.Responses;
 using OnSale.Web.Data;
@@ -13,6 +15,7 @@ using OnSale.Web.Data.Entities;
 using OnSale.Web.Helpers;
 using OnSale.Web.Models;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -41,6 +44,15 @@ namespace OnSale.Web.Controllers.API
             _context = context;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetUsers()
+        {
+            List<User> users = await _context.Users
+                .Include(u => u.City)
+                .ToListAsync();
+            return Ok(users);
+        }
+
         [HttpPost]
         [Route("CreateToken")]
         public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
@@ -54,27 +66,7 @@ namespace OnSale.Web.Controllers.API
 
                     if (result.Succeeded)
                     {
-                        Claim[] claims = new[]
-                        {
-                            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                        };
-
-                        SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));
-                        SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                        JwtSecurityToken token = new JwtSecurityToken(
-                            _configuration["Tokens:Issuer"],
-                            _configuration["Tokens:Audience"],
-                            claims,
-                            expires: DateTime.UtcNow.AddDays(99),
-                            signingCredentials: credentials);
-                        var results = new
-                        {
-                            token = new JwtSecurityTokenHandler().WriteToken(token),
-                            expiration = token.ValidTo,
-                            user
-                        };
-
+                        object results = GetToken(user);
                         return Created(string.Empty, results);
                     }
                 }
@@ -82,6 +74,58 @@ namespace OnSale.Web.Controllers.API
 
             return BadRequest();
         }
+
+        [HttpPost]
+        [Route("LoginFacebook")]
+        public async Task<IActionResult> LoginFacebook([FromBody] FacebookProfile model)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await _userHelper.GetUserAsync(model.Email);
+                if (user == null)
+                {
+                    await _userHelper.AddUserAsync(model);
+                }
+                else
+                {
+                    user.ImageFacebook = model.Picture?.Data?.Url;
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName;
+                    await _userHelper.UpdateUserAsync(user);
+                }
+
+                object results = GetToken(user);
+                return Created(string.Empty, results);
+            }
+
+            return BadRequest();
+        }
+
+        private object GetToken(User user)
+        {
+            Claim[] claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));
+            SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            JwtSecurityToken token = new JwtSecurityToken(
+                _configuration["Tokens:Issuer"],
+                _configuration["Tokens:Audience"],
+                claims,
+                expires: DateTime.UtcNow.AddDays(99),
+                signingCredentials: credentials);
+
+            return new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = token.ValidTo,
+                user
+            };
+        }
+
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
@@ -155,7 +199,9 @@ namespace OnSale.Web.Controllers.API
                 UserName = request.Email,
                 ImageId = imageId,
                 UserType = UserType.User,
-                City = city
+                City = city,
+                Latitude = request.Latitude,
+                Logitude = request.Logitude
             };
 
             IdentityResult result = await _userHelper.AddUserAsync(user, request.Password);
@@ -252,6 +298,8 @@ namespace OnSale.Web.Controllers.API
             user.Document = request.Document;
             user.City = city;
             user.ImageId = imageId;
+            user.Logitude = request.Logitude;
+            user.Latitude = request.Latitude;
 
             IdentityResult respose = await _userHelper.UpdateUserAsync(user);
             if (!respose.Succeeded)
@@ -298,5 +346,6 @@ namespace OnSale.Web.Controllers.API
 
             return Ok(new Response { IsSuccess = true });
         }
+    
     }
 }

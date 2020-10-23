@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using OnSale.Common.Entities;
+using OnSale.Common.Enums;
 using OnSale.Common.Helpers;
 using OnSale.Common.Requests;
 using OnSale.Common.Responses;
@@ -35,6 +36,7 @@ namespace OnSale.Prism.ViewModels
         private ObservableCollection<Country> _countries;
         private bool _isRunning;
         private bool _isEnabled;
+        private bool _isOnSaleUser;
         private MediaFile _file;
         private DelegateCommand _changeImageCommand;
         private DelegateCommand _saveCommand;
@@ -54,6 +56,7 @@ namespace OnSale.Prism.ViewModels
             TokenResponse token = JsonConvert.DeserializeObject<TokenResponse>(Settings.Token);
             User = token.User;
             Image = User.ImageFullPath;
+            IsOnSaleUser = User.LoginType == LoginType.OnSale;
             LoadCountriesAsync();
         }
 
@@ -137,6 +140,12 @@ namespace OnSale.Prism.ViewModels
             set => SetProperty(ref _isEnabled, value);
         }
 
+        public bool IsOnSaleUser
+        {
+            get => _isOnSaleUser;
+            set => SetProperty(ref _isOnSaleUser, value);
+        }
+
         private async void LoadCountriesAsync()
         {
             IsRunning = true;
@@ -175,6 +184,12 @@ namespace OnSale.Prism.ViewModels
 
         private async void ChangeImageAsync()
         {
+            if (!IsOnSaleUser)
+            {
+                await App.Current.MainPage.DisplayAlert(Languages.Error, Languages.ChangeOnSocialNetwork, Languages.Accept);
+                return;
+            }
+
             await CrossMedia.Current.Initialize();
 
             string source = await Application.Current.MainPage.DisplayActionSheet(
@@ -352,6 +367,12 @@ namespace OnSale.Prism.ViewModels
 
         private async void ChangePasswordAsync()
         {
+            if (!IsOnSaleUser)
+            {
+                await App.Current.MainPage.DisplayAlert(Languages.Error, Languages.ChangeOnSocialNetwork, Languages.Accept);
+                return;
+            }
+
             await _navigationService.NavigateAsync(nameof(ChangePasswordPage));
         }
     }

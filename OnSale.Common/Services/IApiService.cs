@@ -1,5 +1,7 @@
-﻿using OnSale.Common.Requests;
+﻿using OnSale.Common.Models;
+using OnSale.Common.Requests;
 using OnSale.Common.Responses;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace OnSale.Common.Services
@@ -9,6 +11,8 @@ namespace OnSale.Common.Services
         Task<Response> GetListAsync<T>(string urlBase, string servicePrefix, string controller);
 
         Task<Response> GetTokenAsync(string urlBase, string servicePrefix, string controller, TokenRequest request);
+
+        Task<Response> GetTokenAsync(string urlBase, string servicePrefix, string controller, FacebookProfile request);
 
         Task<Response> PostQualificationAsync(string urlBase, string servicePrefix, string controller, QualificationRequest qualificationRequest, string token);
         
@@ -25,5 +29,9 @@ namespace OnSale.Common.Services
         Task<Response> GetListAsync<T>(string urlBase, string servicePrefix, string controller, string token);
 
         Task<Response> PutAsync<T>(string urlBase, string servicePrefix, string controller, T model, string token);
+
+        Task<RandomUsers> GetRandomUser(string urlBase, string servicePrefix);
+
+        Task<Stream> GetPictureAsync(string urlBase, string servicePrefix);
     }
 }

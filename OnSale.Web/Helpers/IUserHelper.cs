@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using OnSale.Common.Enums;
+using OnSale.Common.Models;
 using OnSale.Web.Data.Entities;
 using OnSale.Web.Models;
 using System;
@@ -40,5 +41,7 @@ namespace OnSale.Web.Helpers
         Task<string> GeneratePasswordResetTokenAsync(User user);
 
         Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
+
+        Task<User> AddUserAsync(FacebookProfile model);
     }
 }

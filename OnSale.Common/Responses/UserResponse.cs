@@ -24,10 +24,6 @@ namespace OnSale.Common.Responses
 
         public Guid ImageId { get; set; }
 
-        public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://onsalehandres.azurewebsites.net/images/noimage.png"
-            : $"https://handres.blob.core.windows.net/users/{ImageId}";
-
         public UserType UserType { get; set; }
 
         public City City { get; set; }
@@ -35,5 +31,32 @@ namespace OnSale.Common.Responses
         public string FullName => $"{FirstName} {LastName}";
 
         public string FullNameWithDocument => $"{FirstName} {LastName} - {Document}";
+
+        public double Latitude { get; set; }
+
+        public double Logitude { get; set; }
+
+        public string ImageFacebook { get; set; }
+
+        public LoginType LoginType { get; set; }
+
+        public string ImageFullPath
+        {
+            get
+            {
+                if (LoginType == LoginType.Facebook && string.IsNullOrEmpty(ImageFacebook) ||
+                    LoginType == LoginType.OnSale && ImageId == Guid.Empty)
+                {
+                    return $"https://onsalehandres.azurewebsites.net/images/noimage.png";
+                }
+
+                if (LoginType == LoginType.Facebook)
+                {
+                    return ImageFacebook;
+                }
+
+                return $"https://handres.blob.core.windows.net/users/{ImageId}";
+            }
+        }
     }
 }

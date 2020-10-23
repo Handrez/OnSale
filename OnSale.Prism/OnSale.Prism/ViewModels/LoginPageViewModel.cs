@@ -8,6 +8,11 @@ using Prism.Commands;
 using Prism.Navigation;
 using Xamarin.Essentials;
 using Newtonsoft.Json;
+using Plugin.FacebookClient;
+using OnSale.Common.Models;
+using System.Threading.Tasks;
+using System;
+using System.Diagnostics;
 
 namespace OnSale.Prism.ViewModels
 {
@@ -22,6 +27,9 @@ namespace OnSale.Prism.ViewModels
         private DelegateCommand _loginCommand;
         private DelegateCommand _registerCommand;
         private DelegateCommand _forgotPasswordCommand;
+        private readonly IFacebookClient _facebookService = CrossFacebookClient.Current;
+        private DelegateCommand _loginFacebookCommand;
+
 
         public LoginPageViewModel(INavigationService navigationService, IApiService apiService) : base(navigationService)
         {
@@ -36,6 +44,8 @@ namespace OnSale.Prism.ViewModels
         public DelegateCommand RegisterCommand => _registerCommand ?? (_registerCommand = new DelegateCommand(RegisterAsync));
 
         public DelegateCommand ForgotPasswordCommand => _forgotPasswordCommand ?? (_forgotPasswordCommand = new DelegateCommand(ForgotPasswordAsync));
+
+        public DelegateCommand LoginFacebookCommand => _loginFacebookCommand ?? (_loginFacebookCommand = new DelegateCommand(LoginFacebookAsync));
 
         public bool IsRunning
         {
@@ -140,6 +150,79 @@ namespace OnSale.Prism.ViewModels
         private async void RegisterAsync()
         {
             await _navigationService.NavigateAsync(nameof(RegisterPage));
+        }
+
+        private async void LoginFacebookAsync()
+        {
+            try
+            {
+
+                if (_facebookService.IsLoggedIn)
+                {
+                    _facebookService.Logout();
+                }
+
+                async void userDataDelegate(object sender, FBEventArgs<string> e)
+                {
+                    switch (e.Status)
+                    {
+                        case FacebookActionStatus.Completed:
+                            FacebookProfile facebookProfile = await Task.Run(() => JsonConvert.DeserializeObject<FacebookProfile>(e.Data));
+                            await LoginFacebookAsync(facebookProfile);
+                            break;
+                        case FacebookActionStatus.Canceled:
+                            await App.Current.MainPage.DisplayAlert("Facebook Auth", "Canceled", "Ok");
+                            break;
+                        case FacebookActionStatus.Error:
+                            await App.Current.MainPage.DisplayAlert("Facebook Auth", "Error", "Ok");
+                            break;
+                        case FacebookActionStatus.Unauthorized:
+                            await App.Current.MainPage.DisplayAlert("Facebook Auth", "Unauthorized", "Ok");
+                            break;
+                    }
+
+                    _facebookService.OnUserData -= userDataDelegate;
+                }
+
+                _facebookService.OnUserData += userDataDelegate;
+
+                string[] fbRequestFields = { "email", "first_name", "picture.width(999)", "gender", "last_name" };
+                string[] fbPermisions = { "email" };
+                await _facebookService.RequestUserDataAsync(fbRequestFields, fbPermisions);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
+        }
+
+        private async Task LoginFacebookAsync(FacebookProfile facebookProfile)
+        {
+            IsRunning = true;
+            IsEnabled = false;
+
+            string url = App.Current.Resources["UrlAPI"].ToString();
+
+            Response response = await _apiService.GetTokenAsync(url, "api", "/Account/LoginFacebook", facebookProfile);
+
+            if (!response.IsSuccess)
+            {
+                IsRunning = false;
+                IsEnabled = true;
+                await App.Current.MainPage.DisplayAlert(Languages.Error, Languages.LoginError, Languages.Accept);
+                Password = string.Empty;
+                return;
+            }
+
+            TokenResponse token = (TokenResponse)response.Result;
+            Settings.Token = JsonConvert.SerializeObject(token);
+            Settings.IsLogin = true;
+
+            IsRunning = false;
+            IsEnabled = true;
+
+            await _navigationService.NavigateAsync($"/{nameof(OnSaleMasterDetailPage)}/NavigationPage/{nameof(ProductsPage)}");
+            Password = string.Empty;
         }
     }
 }
